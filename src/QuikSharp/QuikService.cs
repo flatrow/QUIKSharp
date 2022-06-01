@@ -56,13 +56,6 @@ namespace QuikSharp
                     service = new QuikService(port, host);
                     Services.Add(port, service);
                 }
-
-                service.Serializer = new JsonSerializer
-                {
-                    TypeNameHandling = TypeNameHandling.None,
-                    NullValueHandling = NullValueHandling.Ignore
-                };
-                service.Serializer.Converters.Add(new MessageConverter(service));
                 return service;
             }
         }
@@ -72,8 +65,16 @@ namespace QuikSharp
             _responsePort = responsePort;
             _callbackPort = _responsePort + 1;
             _host = IPAddress.Parse(host);
-            Start();
+
             Events = new QuikEvents(this);
+            Serializer = new JsonSerializer
+            {
+                TypeNameHandling = TypeNameHandling.None,
+                NullValueHandling = NullValueHandling.Ignore
+            };
+            Serializer.Converters.Add(new MessageConverter(this));
+
+            Start();
         }
 
         /// <summary>
